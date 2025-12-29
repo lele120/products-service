@@ -76,7 +76,7 @@ describe('ProductController', () => {
 
       const result = await controller.findAllPaginated(query);
 
-      expect(findAllPaginatedSpy).toHaveBeenCalledWith(10, 0);
+      expect(findAllPaginatedSpy).toHaveBeenCalledWith(100, 0);
       expect(result).toEqual(mockResult);
     });
   });

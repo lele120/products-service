@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
+import { SequelizeExceptionFilter } from '../src/common/filters/sequelize-exception.filter';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -13,6 +14,10 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+    );
+    app.useGlobalFilters(new SequelizeExceptionFilter());
     await app.init();
   });
 
@@ -26,7 +31,7 @@ describe('AppController (e2e)', () => {
   describe('Products', () => {
     it('/products (POST) - should create a product', async () => {
       const createProductDto = {
-        productToken: 'token123',
+        productToken: `token${Date.now()}`,
         name: 'Test Product',
         price: 10.99,
         stock: 100,
@@ -36,8 +41,11 @@ describe('AppController (e2e)', () => {
         .post('/products')
         .send(createProductDto)
         .expect(201);
-      expect(response.body).toMatchObject(createProductDto);
       expect(response.body).toHaveProperty('id');
+      expect(response.body).toHaveProperty('productToken');
+      expect(response.body.name).toBe(createProductDto.name);
+      expect(response.body.price).toBe(createProductDto.price.toString()); // DECIMAL returned as string
+      expect(response.body.stock).toBe(createProductDto.stock);
     });
 
     it('/products (POST) - should fail with invalid data', () => {

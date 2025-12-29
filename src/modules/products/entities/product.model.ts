@@ -17,14 +17,14 @@ export class Product extends Model<
   declare id: number;
 
   @Column({ type: DataType.STRING, allowNull: false, unique: true })
-  productToken: string;
+  declare productToken: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  name: string;
+  declare name: string;
 
   @Column({ type: DataType.DECIMAL(10, 2), allowNull: false })
-  price: number;
+  declare price: number;
 
   @Column({ type: DataType.INTEGER, allowNull: false })
-  stock: number;
+  declare stock: number;
 }
