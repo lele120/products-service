@@ -5,7 +5,9 @@ import { SequelizeExceptionFilter } from './common/filters/sequelize-exception.f
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+  );
   app.useGlobalFilters(new SequelizeExceptionFilter());
   await app.listen(process.env.PORT ?? 3000);
 }

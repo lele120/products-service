@@ -16,6 +16,7 @@ describe('ProductController', () => {
           provide: ProductService,
           useValue: {
             create: jest.fn(),
+            findAllPaginated: jest.fn(),
           },
         },
       ],
@@ -47,6 +48,36 @@ describe('ProductController', () => {
 
       expect(createSpy).toHaveBeenCalledWith(createProductDto);
       expect(result).toEqual(mockProduct);
+    });
+  });
+
+  describe('findAllPaginated', () => {
+    it('should call productService.findAllPaginated with correct parameters', async () => {
+      const query = { limit: 5, offset: 10 };
+      const mockResult = { rows: [], count: 0 };
+
+      const findAllPaginatedSpy = jest
+        .spyOn(service, 'findAllPaginated')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.findAllPaginated(query);
+
+      expect(findAllPaginatedSpy).toHaveBeenCalledWith(5, 10);
+      expect(result).toEqual(mockResult);
+    });
+
+    it('should use default values when query parameters are not provided', async () => {
+      const query = {};
+      const mockResult = { rows: [], count: 0 };
+
+      const findAllPaginatedSpy = jest
+        .spyOn(service, 'findAllPaginated')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.findAllPaginated(query);
+
+      expect(findAllPaginatedSpy).toHaveBeenCalledWith(10, 0);
+      expect(result).toEqual(mockResult);
     });
   });
 });

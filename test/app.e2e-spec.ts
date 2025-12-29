@@ -24,7 +24,7 @@ describe('AppController (e2e)', () => {
   });
 
   describe('Products', () => {
-    it('/products (POST) - should create a product', () => {
+    it('/products (POST) - should create a product', async () => {
       const createProductDto = {
         productToken: 'token123',
         name: 'Test Product',
@@ -32,14 +32,12 @@ describe('AppController (e2e)', () => {
         stock: 100,
       };
 
-      return request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/products')
         .send(createProductDto)
-        .expect(201)
-        .then((response) => {
-          expect(response.body).toMatchObject(createProductDto);
-          expect(response.body).toHaveProperty('id');
-        });
+        .expect(201);
+      expect(response.body).toMatchObject(createProductDto);
+      expect(response.body).toHaveProperty('id');
     });
 
     it('/products (POST) - should fail with invalid data', () => {
@@ -54,6 +52,24 @@ describe('AppController (e2e)', () => {
         .post('/products')
         .send(invalidDto)
         .expect(400);
+    });
+
+    it('/products (GET) - should return paginated products', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/products?limit=10&offset=0')
+        .expect(200);
+      expect(response.body).toHaveProperty('rows');
+      expect(response.body).toHaveProperty('count');
+      expect(Array.isArray(response.body.rows)).toBe(true);
+      expect(typeof response.body.count).toBe('number');
+    });
+
+    it('/products (GET) - should use default pagination values', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/products')
+        .expect(200);
+      expect(response.body).toHaveProperty('rows');
+      expect(response.body).toHaveProperty('count');
     });
   });
 });

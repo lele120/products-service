@@ -11,6 +11,7 @@ describe('ProductService', () => {
   beforeEach(async () => {
     mockProductModel = {
       create: jest.fn(),
+      findAndCountAll: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -46,6 +47,35 @@ describe('ProductService', () => {
 
       expect(mockProductModel.create).toHaveBeenCalledWith(createProductDto);
       expect(result).toEqual(mockProduct);
+    });
+  });
+
+  describe('findAllPaginated', () => {
+    it('should return paginated products', async () => {
+      const limit = 10;
+      const offset = 0;
+      const mockResult = {
+        rows: [
+          {
+            id: 1,
+            productToken: 'token1',
+            name: 'Product 1',
+            price: 10.99,
+            stock: 100,
+          },
+        ],
+        count: 1,
+      };
+
+      mockProductModel.findAndCountAll.mockResolvedValue(mockResult);
+
+      const result = await service.findAllPaginated(limit, offset);
+
+      expect(mockProductModel.findAndCountAll).toHaveBeenCalledWith({
+        limit,
+        offset,
+      });
+      expect(result).toEqual(mockResult);
     });
   });
 });

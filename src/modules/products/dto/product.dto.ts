@@ -1,4 +1,13 @@
-import { IsString, IsNotEmpty, IsNumber, Min, IsInt } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  Min,
+  IsInt,
+  IsOptional,
+  Max,
+} from 'class-validator';
+import { Type, Transform, TransformFnParams } from 'class-transformer';
 
 export class CreateProductDto {
   @IsString({ message: 'Product token must be a string' })
@@ -19,4 +28,21 @@ export class CreateProductDto {
   @IsInt()
   @Min(0, { message: 'Stock must be at least 0' })
   stock: number;
+}
+
+export class PaginationQueryDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  @Transform(({ value }: TransformFnParams) => parseInt(String(value), 10))
+  limit?: number = 100;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Transform(({ value }: TransformFnParams) => parseInt(String(value), 10))
+  offset?: number = 0;
 }

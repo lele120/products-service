@@ -13,4 +13,15 @@ export class ProductService {
     const product = await this.productModel.create(productData);
     return product as Product;
   }
+
+  async findAllPaginated(
+    limit: number,
+    offset: number,
+  ): Promise<{ rows: Product[]; count: number }> {
+    const products = await this.productModel.findAndCountAll({
+      limit,
+      offset,
+    });
+    return products as { rows: Product[]; count: number };
+  }
 }
