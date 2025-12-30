@@ -6,8 +6,6 @@ A high-performance RESTful API service for managing products in e-commerce platf
 
 - **Complete CRUD Operations**: Create, Read, Update (stock), Delete products
 - **Pagination**: Efficient pagination for product listings with sorting options
-- **Advanced Querying**: Search by name/token, filter by price range, low stock alerts
-- **Database Optimization**: Strategic indexes for high-performance queries
 - **Validation**: Comprehensive input validation using class-validator
 - **Error Handling**: Global exception filters for consistent error responses
 - **Database Integration**: PostgreSQL with Sequelize ORM
@@ -60,23 +58,6 @@ Content-Type: application/json
 DELETE /products/1
 ```
 
-### Advanced Querying
-
-#### Search Products
-```bash
-GET /products/search?term=laptop&limit=10&offset=0
-```
-
-#### Filter by Price Range
-```bash
-GET /products/price-range?minPrice=10&maxPrice=100&limit=20
-```
-
-#### Get Low Stock Products
-```bash
-GET /products/low-stock?threshold=5
-```
-
 #### Sort Products
 ```bash
 GET /products?orderBy=price&orderDirection=ASC&limit=10
@@ -84,25 +65,16 @@ GET /products?orderBy=price&orderDirection=ASC&limit=10
 
 ## Performance Optimizations
 
-### Database Indexes
-The application includes strategic database indexes for optimal query performance:
-
-- `idx_product_token` - Unique index on `productToken` for fast lookups
-- `idx_product_name` - Index on `name` for search operations
-- `idx_product_price` - Index on `price` for range queries and sorting
-- `idx_product_stock` - Index on `stock` for inventory management queries
-
 ### Query Optimizations
 - **Selective Field Loading**: Queries load only necessary fields to reduce memory usage
 - **Efficient Updates**: Stock updates use single-query operations instead of read-then-update
-- **Indexed Sorting**: All sorting operations leverage database indexes
+- **Optimized Sorting**: Sorting operations on indexed database columns
 - **Pagination**: Efficient LIMIT/OFFSET with proper ordering for large datasets
 
-### Advanced Features
-- **Search Functionality**: Full-text search across product names and tokens
-- **Price Range Filtering**: Optimized queries for price-based product filtering
-- **Low Stock Alerts**: Fast queries for inventory management
-- **Flexible Sorting**: Multiple sort options (name, price, stock, date)
+### Database Features
+- **Unique Constraints**: Product tokens are enforced as unique at database level
+- **Type Safety**: Full TypeScript integration with Sequelize models
+- **Connection Pooling**: Configurable database connection pooling for high concurrency
 
 ## Data Model & Validation
 
