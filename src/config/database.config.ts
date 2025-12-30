@@ -1,20 +1,32 @@
 import { SequelizeModuleOptions } from '@nestjs/sequelize';
+import { ConfigService } from '@nestjs/config';
 
-export const databaseConfig: SequelizeModuleOptions = {
-  dialect: (process.env.DATABASE_DIALECT as any) || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : undefined,
-  username: process.env.DB_USERNAME || undefined,
-  password: process.env.DB_PASSWORD || undefined,
-  database: process.env.DB_DATABASE || undefined,
-  synchronize: process.env.SEQUELIZE_SYNC === 'true',
+export const databaseConfig = (
+  configService: ConfigService,
+): SequelizeModuleOptions => ({
+  dialect: configService.get<string>('DATABASE_DIALECT', 'mysql') as any,
+  host: configService.get<string>('DB_HOST'),
+  port: parseInt(configService.get<string>('DB_PORT', '3306'), 10),
+  username: configService.get<string>('DB_USERNAME'),
+  password: configService.get<string>('DB_PASSWORD'),
+  database: configService.get<string>('DB_DATABASE'),
+  synchronize: configService.get<string>('SEQUELIZE_SYNC') === 'true',
   autoLoadModels: true,
-  logging: process.env.SEQUELIZE_LOGGING === 'true' ? console.log : false,
+  logging:
+    configService.get<string>('SEQUELIZE_LOGGING') === 'true'
+      ? console.log
+      : false,
   pool: {
-    max: parseInt(process.env.DATABASE_POOL_MAX || '10', 10),
-    min: parseInt(process.env.DATABASE_POOL_MIN || '0', 10),
-    acquire: parseInt(process.env.DATABASE_POOL_ACQUIRE || '30000', 10),
-    idle: parseInt(process.env.DATABASE_POOL_IDLE || '10000', 10),
+    max: parseInt(configService.get<string>('DATABASE_POOL_MAX', '10'), 10),
+    min: parseInt(configService.get<string>('DATABASE_POOL_MIN', '0'), 10),
+    acquire: parseInt(
+      configService.get<string>('DATABASE_POOL_ACQUIRE', '30000'),
+      10,
+    ),
+    idle: parseInt(
+      configService.get<string>('DATABASE_POOL_IDLE', '10000'),
+      10,
+    ),
   },
-  ssl: process.env.DATABASE_SSL === 'true',
-};
+  ssl: configService.get<string>('DATABASE_SSL') === 'true',
+});
