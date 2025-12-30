@@ -7,6 +7,8 @@ import {
   Patch,
   Param,
   ParseIntPipe,
+  Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import {
@@ -38,5 +40,11 @@ export class ProductController {
     @Body() updateProductStockDto: UpdateProductStockDto,
   ) {
     return this.productService.updateProductStock(id, updateProductStockDto);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteProduct(@Param('id', ParseIntPipe) id: number) {
+    return this.productService.deleteProduct(id);
   }
 }

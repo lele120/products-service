@@ -36,4 +36,12 @@ export class ProductService {
     await product.update(updateProductStockDto);
     return product as Product;
   }
+
+  async deleteProduct(id: number): Promise<void> {
+    const product = await this.productModel.destroy({ where: { id } });
+    if (product === 0) {
+      throw new NotFoundException('Product not found');
+    }
+    return;
+  }
 }
