@@ -19,6 +19,11 @@ describe('ProductController', () => {
             findAllPaginated: jest.fn(),
             updateProductStock: jest.fn(),
             deleteProduct: jest.fn(),
+            findByToken: jest.fn(),
+            findById: jest.fn(),
+            searchProducts: jest.fn(),
+            getProductsByPriceRange: jest.fn(),
+            getLowStockProducts: jest.fn(),
           },
         },
       ],
@@ -55,7 +60,12 @@ describe('ProductController', () => {
 
   describe('findAllPaginated', () => {
     it('should call productService.findAllPaginated with correct parameters', async () => {
-      const query = { limit: 5, offset: 10 };
+      const query = {
+        limit: 5,
+        offset: 10,
+        orderBy: 'name' as const,
+        orderDirection: 'ASC' as const,
+      };
       const mockResult = { rows: [], count: 0 };
 
       const findAllPaginatedSpy = jest
@@ -64,7 +74,7 @@ describe('ProductController', () => {
 
       const result = await controller.findAllPaginated(query);
 
-      expect(findAllPaginatedSpy).toHaveBeenCalledWith(5, 10);
+      expect(findAllPaginatedSpy).toHaveBeenCalledWith(5, 10, 'name', 'ASC');
       expect(result).toEqual(mockResult);
     });
 
@@ -78,7 +88,7 @@ describe('ProductController', () => {
 
       const result = await controller.findAllPaginated(query);
 
-      expect(findAllPaginatedSpy).toHaveBeenCalledWith(100, 0);
+      expect(findAllPaginatedSpy).toHaveBeenCalledWith(100, 0, 'id', 'DESC');
       expect(result).toEqual(mockResult);
     });
   });

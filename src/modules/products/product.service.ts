@@ -17,10 +17,15 @@ export class ProductService {
   async findAllPaginated(
     limit: number,
     offset: number,
+    orderBy: 'name' | 'price' | 'stock' | 'id',
+    orderDirection: 'ASC' | 'DESC' = 'DESC',
   ): Promise<{ rows: Product[]; count: number }> {
     const products = await this.productModel.findAndCountAll({
       limit,
       offset,
+      order: [[orderBy, orderDirection]],
+      // Optimize query by selecting only needed fields for list view
+      attributes: ['id', 'productToken', 'name', 'price', 'stock'],
     });
     return products as { rows: Product[]; count: number };
   }
@@ -29,12 +34,19 @@ export class ProductService {
     id: number,
     updateProductStockDto: UpdateProductStockDto,
   ): Promise<Product> {
-    const product = await this.productModel.findByPk(id);
-    if (product === null) {
+    const [affectedRows, updatedProducts] = await this.productModel.update(
+      updateProductStockDto,
+      {
+        where: { id },
+        returning: true, // Return updated rows (PostgreSQL/MySQL specific)
+      },
+    );
+
+    if (affectedRows === 0) {
       throw new NotFoundException('Product not found');
     }
-    await product.update(updateProductStockDto);
-    return product as Product;
+
+    return updatedProducts[0] as Product;
   }
 
   async deleteProduct(id: number): Promise<void> {

@@ -16,6 +16,7 @@ describe('ProductService', () => {
       findByPk: jest.fn(),
       update: jest.fn(),
       destroy: jest.fn(),
+      sequelize: { Op: {} },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -58,6 +59,8 @@ describe('ProductService', () => {
     it('should return paginated products', async () => {
       const limit = 10;
       const offset = 0;
+      const orderBy = 'id';
+      const orderDirection = 'DESC';
       const mockResult = {
         rows: [
           {
@@ -73,11 +76,18 @@ describe('ProductService', () => {
 
       mockProductModel.findAndCountAll.mockResolvedValue(mockResult);
 
-      const result = await service.findAllPaginated(limit, offset);
+      const result = await service.findAllPaginated(
+        limit,
+        offset,
+        orderBy,
+        orderDirection,
+      );
 
       expect(mockProductModel.findAndCountAll).toHaveBeenCalledWith({
         limit,
         offset,
+        order: [[orderBy, orderDirection]],
+        attributes: ['id', 'productToken', 'name', 'price', 'stock'],
       });
       expect(result).toEqual(mockResult);
     });
@@ -87,27 +97,28 @@ describe('ProductService', () => {
     it('should update product stock and return the updated product', async () => {
       const id = 1;
       const updateProductStockDto: UpdateProductStockDto = { stock: 50 };
-      const mockProduct = {
+      const updatedProduct = {
         id: 1,
         productToken: 'token1',
         name: 'Product 1',
         price: 10.99,
-        stock: 100,
-        update: jest.fn().mockImplementation(function (dto) {
-          this.stock = dto.stock;
-          return Promise.resolve(this);
-        }),
-      } as any;
+        stock: 50,
+      };
 
-      mockProductModel.findByPk.mockResolvedValue(mockProduct);
+      mockProductModel.update.mockResolvedValue([1, [updatedProduct]]);
 
       const result = await service.updateProductStock(
         id,
         updateProductStockDto,
       );
 
-      expect(mockProductModel.findByPk).toHaveBeenCalledWith(id);
-      expect(mockProduct.update).toHaveBeenCalledWith(updateProductStockDto);
+      expect(mockProductModel.update).toHaveBeenCalledWith(
+        updateProductStockDto,
+        {
+          where: { id },
+          returning: true,
+        },
+      );
       expect(result).toMatchObject({
         id: 1,
         productToken: 'token1',
@@ -121,12 +132,18 @@ describe('ProductService', () => {
       const id = 999;
       const updateProductStockDto: UpdateProductStockDto = { stock: 50 };
 
-      mockProductModel.findByPk.mockResolvedValue(null);
+      mockProductModel.update.mockResolvedValue([0, []]);
 
       await expect(
         service.updateProductStock(id, updateProductStockDto),
       ).rejects.toThrow(NotFoundException);
-      expect(mockProductModel.findByPk).toHaveBeenCalledWith(id);
+      expect(mockProductModel.update).toHaveBeenCalledWith(
+        updateProductStockDto,
+        {
+          where: { id },
+          returning: true,
+        },
+      );
     });
   });
 

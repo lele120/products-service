@@ -31,6 +31,8 @@ export class ProductController {
     return this.productService.findAllPaginated(
       query.limit ?? 100,
       query.offset ?? 0,
+      query.orderBy ?? 'id',
+      query.orderDirection ?? 'DESC',
     );
   }
 

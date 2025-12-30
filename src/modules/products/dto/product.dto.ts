@@ -6,6 +6,7 @@ import {
   IsInt,
   IsOptional,
   Max,
+  IsIn,
 } from 'class-validator';
 import { Type, Transform, TransformFnParams } from 'class-transformer';
 
@@ -45,6 +46,14 @@ export class PaginationQueryDto {
   @Min(0)
   @Transform(({ value }: TransformFnParams) => parseInt(String(value), 10))
   offset?: number = 0;
+
+  @IsOptional()
+  @IsIn(['name', 'price', 'stock', 'id'])
+  orderBy?: 'name' | 'price' | 'stock' | 'id';
+
+  @IsOptional()
+  @IsIn(['ASC', 'DESC'])
+  orderDirection?: 'ASC' | 'DESC' = 'DESC';
 }
 
 export class UpdateProductStockDto {
