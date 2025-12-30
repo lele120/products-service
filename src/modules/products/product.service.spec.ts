@@ -105,7 +105,8 @@ describe('ProductService', () => {
         stock: 50,
       };
 
-      mockProductModel.update.mockResolvedValue([1, [updatedProduct]]);
+      mockProductModel.update.mockResolvedValue([1]);
+      mockProductModel.findByPk.mockResolvedValue(updatedProduct);
 
       const result = await service.updateProductStock(
         id,
@@ -116,9 +117,9 @@ describe('ProductService', () => {
         updateProductStockDto,
         {
           where: { id },
-          returning: true,
         },
       );
+      expect(mockProductModel.findByPk).toHaveBeenCalledWith(id);
       expect(result).toMatchObject({
         id: 1,
         productToken: 'token1',
@@ -132,7 +133,7 @@ describe('ProductService', () => {
       const id = 999;
       const updateProductStockDto: UpdateProductStockDto = { stock: 50 };
 
-      mockProductModel.update.mockResolvedValue([0, []]);
+      mockProductModel.update.mockResolvedValue([0]);
 
       await expect(
         service.updateProductStock(id, updateProductStockDto),
@@ -141,7 +142,6 @@ describe('ProductService', () => {
         updateProductStockDto,
         {
           where: { id },
-          returning: true,
         },
       );
     });

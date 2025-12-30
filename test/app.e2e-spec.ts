@@ -44,7 +44,7 @@ describe('AppController (e2e)', () => {
       expect(response.body).toHaveProperty('id');
       expect(response.body).toHaveProperty('productToken');
       expect(response.body.name).toBe(createProductDto.name);
-      expect(response.body.price).toBe(createProductDto.price.toString()); // DECIMAL returned as string
+      expect(response.body.price).toBe(createProductDto.price); // DECIMAL returned as number in MySQL
       expect(response.body.stock).toBe(createProductDto.stock);
     });
 

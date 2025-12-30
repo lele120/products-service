@@ -1,6 +1,6 @@
 # Products Service
 
-A high-performance RESTful API service for managing products in e-commerce platforms, built with NestJS, TypeScript, and Sequelize ORM. Supports both PostgreSQL and MySQL databases with optimized queries for large-scale operations.
+A high-performance RESTful API service for managing products in e-commerce platforms, built with NestJS, TypeScript, and Sequelize ORM. Supports MySQL database with optimized queries for large-scale operations.
 
 ## Features
 

@@ -34,11 +34,10 @@ export class ProductService {
     id: number,
     updateProductStockDto: UpdateProductStockDto,
   ): Promise<Product> {
-    const [affectedRows, updatedProducts] = await this.productModel.update(
+    const [affectedRows] = await this.productModel.update(
       updateProductStockDto,
       {
         where: { id },
-        returning: true, // Return updated rows (PostgreSQL/MySQL specific)
       },
     );
 
@@ -46,7 +45,13 @@ export class ProductService {
       throw new NotFoundException('Product not found');
     }
 
-    return updatedProducts[0] as Product;
+    // Fetch the updated product
+    const updatedProduct = await this.productModel.findByPk(id);
+    if (!updatedProduct) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return updatedProduct as Product;
   }
 
   async deleteProduct(id: number): Promise<void> {
