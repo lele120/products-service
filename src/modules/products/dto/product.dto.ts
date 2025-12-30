@@ -46,3 +46,11 @@ export class PaginationQueryDto {
   @Transform(({ value }: TransformFnParams) => parseInt(String(value), 10))
   offset?: number = 0;
 }
+
+export class UpdateProductStockDto {
+  @IsNumber({}, { message: 'Stock must be a number' })
+  @IsNotEmpty({ message: 'Stock should not be empty' })
+  @IsInt()
+  @Min(0, { message: 'Stock must be at least 0' })
+  stock: number;
+}

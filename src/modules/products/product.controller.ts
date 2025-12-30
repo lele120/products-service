@@ -1,6 +1,19 @@
-import { Controller, Post, Body, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Query,
+  Patch,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
-import { CreateProductDto, PaginationQueryDto } from './dto/product.dto';
+import {
+  CreateProductDto,
+  PaginationQueryDto,
+  UpdateProductStockDto,
+} from './dto/product.dto';
 
 @Controller('products')
 export class ProductController {
@@ -17,5 +30,13 @@ export class ProductController {
       query.limit ?? 100,
       query.offset ?? 0,
     );
+  }
+
+  @Patch(':id/stock')
+  async updatePRoductStock(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProductStockDto: UpdateProductStockDto,
+  ) {
+    return this.productService.updateProductStock(id, updateProductStockDto);
   }
 }
