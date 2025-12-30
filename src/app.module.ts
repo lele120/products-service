@@ -4,7 +4,6 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductModule } from './modules/products/product.module';
-//import { databaseConfig } from './config/database.config';
 
 @Module({
   imports: [
@@ -14,10 +13,7 @@ import { ProductModule } from './modules/products/product.module';
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        dialect: configService.get<string>(
-          'DATABASE_DIALECT',
-          'postgres',
-        ) as any,
+        dialect: configService.get<string>('DATABASE_DIALECT', 'mysql') as any,
         host: configService.get<string>('DB_HOST'),
         port: parseInt(configService.get<string>('DB_PORT', '5432'), 10),
         username: configService.get<string>('DB_USERNAME'),

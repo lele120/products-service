@@ -8,7 +8,7 @@ A high-performance RESTful API service for managing products in e-commerce platf
 - **Pagination**: Efficient pagination for product listings with sorting options
 - **Validation**: Comprehensive input validation using class-validator
 - **Error Handling**: Global exception filters for consistent error responses
-- **Database Integration**: PostgreSQL with Sequelize ORM
+- **Database Integration**: MySQL with Sequelize ORM
 - **Testing**: Full test coverage including unit tests and e2e tests
 - **TypeScript**: Full TypeScript support for type safety
 
@@ -163,7 +163,7 @@ Ensure your production environment has the correct database settings:
 ```bash
 # Database Configuration
 DB_HOST=your-production-db-host
-DB_PORT=5432  # or 3306 for MySQL
+DB_PORT=3306  # MySQL default port
 DB_USERNAME=your-db-user
 DB_PASSWORD=your-secure-password
 DB_DATABASE=your-production-db
@@ -230,7 +230,7 @@ src/
 ### Key Technologies
 - **Framework**: NestJS with TypeScript
 - **ORM**: Sequelize with TypeScript decorators
-- **Database**: PostgreSQL/MySQL support
+- **Database**: MySQL with Sequelize ORM
 - **Validation**: class-validator + class-transformer
 - **Testing**: Jest with supertest for e2e
 - **Code Quality**: ESLint + Prettier
