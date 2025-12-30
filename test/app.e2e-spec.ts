@@ -147,9 +147,7 @@ describe('AppController (e2e)', () => {
     });
 
     it('/products/:id (DELETE) - should fail if product not found', () => {
-      return request(app.getHttpServer())
-        .delete('/products/99999')
-        .expect(404);
+      return request(app.getHttpServer()).delete('/products/99999').expect(404);
     });
 
     it('/products/:id (DELETE) - should fail with invalid id', () => {
