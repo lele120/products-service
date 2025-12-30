@@ -79,5 +79,83 @@ describe('AppController (e2e)', () => {
       expect(response.body).toHaveProperty('rows');
       expect(response.body).toHaveProperty('count');
     });
+
+    it('/products/:id/stock (PATCH) - should update product stock', async () => {
+      // First create a product
+      const createProductDto = {
+        productToken: `token${Date.now()}`,
+        name: 'Test Product for Update',
+        price: 20.99,
+        stock: 100,
+      };
+      const createResponse = await request(app.getHttpServer())
+        .post('/products')
+        .send(createProductDto)
+        .expect(201);
+      const productId = createResponse.body.id;
+
+      // Now update stock
+      const updateStockDto = { stock: 50 };
+      const updateResponse = await request(app.getHttpServer())
+        .patch(`/products/${productId}/stock`)
+        .send(updateStockDto)
+        .expect(200);
+      expect(updateResponse.body.stock).toBe(50);
+      expect(updateResponse.body.id).toBe(productId);
+    });
+
+    it('/products/:id/stock (PATCH) - should fail with invalid stock', () => {
+      const updateStockDto = { stock: -1 };
+      return request(app.getHttpServer())
+        .patch('/products/1/stock')
+        .send(updateStockDto)
+        .expect(400);
+    });
+
+    it('/products/:id/stock (PATCH) - should fail if product not found', () => {
+      const updateStockDto = { stock: 50 };
+      return request(app.getHttpServer())
+        .patch('/products/99999/stock')
+        .send(updateStockDto)
+        .expect(404);
+    });
+
+    it('/products/:id (DELETE) - should delete a product', async () => {
+      // First create a product
+      const createProductDto = {
+        productToken: `token${Date.now()}`,
+        name: 'Test Product for Delete',
+        price: 15.99,
+        stock: 75,
+      };
+      const createResponse = await request(app.getHttpServer())
+        .post('/products')
+        .send(createProductDto)
+        .expect(201);
+      const productId = createResponse.body.id;
+
+      // Now delete
+      await request(app.getHttpServer())
+        .delete(`/products/${productId}`)
+        .expect(204);
+
+      // Verify it's deleted by trying to get it or update
+      await request(app.getHttpServer())
+        .patch(`/products/${productId}/stock`)
+        .send({ stock: 10 })
+        .expect(404);
+    });
+
+    it('/products/:id (DELETE) - should fail if product not found', () => {
+      return request(app.getHttpServer())
+        .delete('/products/99999')
+        .expect(404);
+    });
+
+    it('/products/:id (DELETE) - should fail with invalid id', () => {
+      return request(app.getHttpServer())
+        .delete('/products/invalid')
+        .expect(400);
+    });
   });
 });

@@ -35,7 +35,7 @@ export class ProductController {
   }
 
   @Patch(':id/stock')
-  async updatePRoductStock(
+  async updateProductStock(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductStockDto: UpdateProductStockDto,
   ) {

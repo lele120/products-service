@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
-import { CreateProductDto } from './dto/product.dto';
+import { CreateProductDto, UpdateProductStockDto } from './dto/product.dto';
 import { Product } from './entities/product.model';
 
 describe('ProductController', () => {
@@ -17,6 +17,8 @@ describe('ProductController', () => {
           useValue: {
             create: jest.fn(),
             findAllPaginated: jest.fn(),
+            updateProductStock: jest.fn(),
+            deleteProduct: jest.fn(),
           },
         },
       ],
@@ -78,6 +80,50 @@ describe('ProductController', () => {
 
       expect(findAllPaginatedSpy).toHaveBeenCalledWith(100, 0);
       expect(result).toEqual(mockResult);
+    });
+  });
+
+  describe('updateProductStock', () => {
+    it('should call productService.updateProductStock with correct parameters', async () => {
+      const id = 1;
+      const updateProductStockDto: UpdateProductStockDto = { stock: 50 };
+      const mockUpdatedProduct = {
+        id: 1,
+        productToken: 'token1',
+        name: 'Product 1',
+        price: 10.99,
+        stock: 50,
+      } as Product;
+
+      const updateProductStockSpy = jest
+        .spyOn(service, 'updateProductStock')
+        .mockResolvedValue(mockUpdatedProduct);
+
+      const result = await controller.updateProductStock(
+        id,
+        updateProductStockDto,
+      );
+
+      expect(updateProductStockSpy).toHaveBeenCalledWith(
+        id,
+        updateProductStockDto,
+      );
+      expect(result).toEqual(mockUpdatedProduct);
+    });
+  });
+
+  describe('deleteProduct', () => {
+    it('should call productService.deleteProduct with correct id', async () => {
+      const id = 1;
+
+      const deleteProductSpy = jest
+        .spyOn(service, 'deleteProduct')
+        .mockResolvedValue(undefined);
+
+      const result = await controller.deleteProduct(id);
+
+      expect(deleteProductSpy).toHaveBeenCalledWith(id);
+      expect(result).toBeUndefined();
     });
   });
 });
