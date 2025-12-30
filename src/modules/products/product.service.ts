@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Product } from './entities/product.model';
 import { CreateProductDto, UpdateProductStockDto } from './dto/product.dto';
+import { ERROR_MESSAGES } from '../../constants';
 
 @Injectable()
 export class ProductService {
@@ -42,13 +43,13 @@ export class ProductService {
     );
 
     if (affectedRows === 0) {
-      throw new NotFoundException('Product not found');
+      throw new NotFoundException(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
     }
 
     // Fetch the updated product
     const updatedProduct = await this.productModel.findByPk(id);
     if (!updatedProduct) {
-      throw new NotFoundException('Product not found');
+      throw new NotFoundException(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
     }
 
     return updatedProduct as Product;
@@ -57,7 +58,7 @@ export class ProductService {
   async deleteProduct(id: number): Promise<void> {
     const product = await this.productModel.destroy({ where: { id } });
     if (product === 0) {
-      throw new NotFoundException('Product not found');
+      throw new NotFoundException(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
     }
     return;
   }
