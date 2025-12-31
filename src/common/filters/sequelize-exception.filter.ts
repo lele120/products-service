@@ -3,13 +3,20 @@ import {
   Catch,
   ExceptionFilter,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UniqueConstraintError, ValidationError } from 'sequelize';
 import { ERROR_MESSAGES } from '../../constants';
+import { AppLogger } from '../logger/logger.service';
 
 @Catch(UniqueConstraintError, ValidationError)
 export class SequelizeExceptionFilter implements ExceptionFilter {
+  constructor(
+    @Inject(AppLogger)
+    private readonly logger: AppLogger,
+  ) {}
+
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();

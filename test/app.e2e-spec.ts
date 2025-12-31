@@ -17,7 +17,8 @@ describe('AppController (e2e)', () => {
     app.useGlobalPipes(
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
     );
-    app.useGlobalFilters(new SequelizeExceptionFilter());
+    const sequelizeFilter = moduleFixture.get(SequelizeExceptionFilter);
+    app.useGlobalFilters(sequelizeFilter);
     await app.init();
   });
 
